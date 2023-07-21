@@ -20,7 +20,9 @@ async def begin(message: types.Message):
                           "/random_anime - случайное аниме из запланированных \n"
                           "/count_watched - число просмотренных тайтлов \n"
                           "/count_will_see - число запланированных тайтлов \n"
-                          "/add_watched - добавить в просмотренные \n")
+                          "/add_watched - добавить в просмотренные \n"
+                          "/add_will_see - добавить в желаемые \n")
+
 
 
 @dp.message_handler(commands=["watched_list"])
@@ -68,19 +70,36 @@ async def count_will_see_anime(message: types.Message):
 
 
 
-class Add_Watched(StatesGroup):
+class Add_in_list(StatesGroup):
       waiting_add_wached = State()
+      waiting_add_will_see = State()
+
 @dp.message_handler(commands=["add_watched"])
 async def state_add_watched(message: types.Message, state: FSMContext):
       await message.reply("Какое аниме я посмотрел?")
-      await state.set_state(Add_Watched.waiting_add_wached.state)
+      await state.set_state(Add_in_list.waiting_add_wached.state)
 
-@dp.message_handler(state=Add_Watched.waiting_add_wached)
+@dp.message_handler(state=Add_in_list.waiting_add_wached)
 async def add_watched(message: types.Message, state: FSMContext):
       await state.update_data(new_anime = message.text, encoding="utf-8")
-      text=message.text+"; "
-      with open('list.txt', 'a+', encoding="utf-8") as file_tee:
-            file_tee.write(f'{text}')
+      new_anime=message.text+"; "
+      with open('list.txt', 'a+', encoding="utf-8") as anime_file:
+            anime_file.write(f'{new_anime}')
+      await message.answer(f"Записано")
+      await state.finish()
+
+
+@dp.message_handler(commands=["add_will_see"])
+async def state_add_will_see(message: types.Message, state: FSMContext):
+      await message.reply("Какое аниме добавить?")
+      await state.set_state(Add_in_list.waiting_add_will_see)
+
+@dp.message_handler(state=Add_in_list.waiting_add_will_see)
+async def add_will_see(message: types.Message, state: FSMContext):
+      await state.update_data(new_anime = message.text, encoding ="utf-8")
+      new_anime = message.text+"\n"
+      with open('see.txt', 'a+', encoding="utf-8") as anime_file:
+            anime_file.write(f'{new_anime}')
       await message.answer(f"Записано")
       await state.finish()
 
