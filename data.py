@@ -5,7 +5,7 @@ from aiogram.dispatcher.filters.state import State, StatesGroup
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 
-TOKEN_API = "6341860132:AAHeV2AAFyVZqNK73nAtbnG58GGvYRuBBpo"
+TOKEN_API = ""
 
 storage = MemoryStorage() # хрень, которая даёт доступ машине состояний к оперативке
 bot = Bot(TOKEN_API)
